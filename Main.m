@@ -33,17 +33,17 @@ K = 3; % number of S4/tau0 classes
 S4s = [0.5, 1, 0.9];
 tau0s = [0.7, 2, 0.25];
 
-rxvel = [0 100]; % receiver velocity
+rx_vel = [0 100]; % receiver velocity
 
 % list of field names for output
 fields = {'S4_050_tau0_070_rxvel_static', 'S4_100_tau0_200_rxvel_static', 'S4_090_tau0_025_rxvel_static', 'S4_050_tau0_070_rxvel_dynamic', 'S4_100_tau0_200_rxvel_dynamic', 'S4_090_tau0_025_rxvel_dynamic'};
 
 %% Start simulation
-for v = 1:numel(rxvel)
+for v = 1:numel(rx_vel)
     %    V1 = east-west velocity on the earth arc (m/s, eastward +)
     %    V2 = north-south velocity on the earch arc (m/s, northward +)
     %    V3 = up-down velocity (m/s, up +)
-    userInput.RXVel = [rxvel(v) 0 0]';
+    userInput.RXVel = [rx_vel(v) 0 0]';
     for k = 1:K % for all classes
         userInput.S4 = S4s(k); % S4 index (0~1)
         userInput.tau0 = tau0s(k); % Signal intensity decorrelation time in sec.
@@ -103,6 +103,9 @@ for v = 1:numel(rxvel)
     end
 end
 
-scint_dataset.sampling_time = .01; % check `Dt` in Libraries/GenScintFieldRealization/RunGenScintFieldRealization.m
+scint_dataset.sampling_time_sec = .01; % check `Dt` in Libraries/GenScintFieldRealization/RunGenScintFieldRealization.m
+scint_dataset.rx_pos_llh = userInput.RXPos;
+scint_dataset.duration_sec = userInput.length;
+scint_dataset.rx_vel_m_s = rx_vel(end);
 
 save('scint_dataset.mat', 'scint_dataset');
